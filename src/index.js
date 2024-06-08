@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+import { swaggerSpec } from "./docs/swagger.js";
+import { serve, setup } from "swagger-ui-express";
 import { factoryRoutes } from "./routes/factory.routes.js";
 import { sprocketRoutes } from "./routes/sprocket.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -12,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/factories', factoryRoutes);
 app.use('/sprockets', sprocketRoutes);
-
+app.use('/api-docs', serve, setup(swaggerSpec));
 app.use(errorHandler);
 
 app.listen(3000, () => {
