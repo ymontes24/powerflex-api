@@ -4,10 +4,7 @@ import { factoryIdSchema } from '../../schema/factory.schema.js';
 export const getFactoryByIdController = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { error: idError } = await factoryIdSchema.validateAsync({ id });
-        if (idError) {
-            return res.status(400).json({ error: idError.details[0].message });
-        }
+        await factoryIdSchema.validateAsync({ id });
         const factory = await getFactoryById(id);
         if (!factory) {
             return res.status(404).json({ error: 'Factory not found' });
@@ -25,6 +22,9 @@ export const getFactoryByIdController = async (req, res, next) => {
         };
         res.status(200).json(formattedFactory);
     } catch (error) {
+        if (error.isJoi) {
+            return res.status(400).json({ error: error.message });
+        }
         next(error);
     }
 }
