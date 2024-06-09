@@ -11,7 +11,10 @@ describe('createSprocketController', () => {
     beforeEach(() => {
         req = {
             body: {
-                // Add your test data here
+                teeth: 30,
+                pitch_diameter: 1.5,
+                outside_diameter: 2.5,
+                pitch: 1.2
             },
         };
         res = {
@@ -27,7 +30,10 @@ describe('createSprocketController', () => {
 
     it('should create a new sprocket and return it with status 201', async () => {
         const sprocket = {
-            // Add your test data here
+            teeth: 30,
+            pitch_diameter: 1.5,
+            outside_diameter: 2.5,
+            pitch: 1.2
         };
 
         sprocketCreateSchema.validateAsync.mockResolvedValue({});

@@ -6,15 +6,8 @@ export const updateSprocketController = async (req, res, next) => {
         const { id } = req.params;
         const sprocket = req.body;
 
-        const { error: idError } = await sprocketIdSchema.validateAsync({ id });
-        if (idError) {
-            return res.status(400).json({ error: idError.details[0].message });
-        }
-
-        const { error: sprocketError } = await sprocketUpdateSchema.validateAsync(sprocket);
-        if (sprocketError) {
-            return res.status(400).json({ error: sprocketError.details[0].message });
-        }
+        await sprocketIdSchema.validateAsync({ id });
+        await sprocketUpdateSchema.validateAsync(sprocket);
 
         const getsprocket = await getSprocketById(id);
         if (!getsprocket) {
@@ -24,6 +17,9 @@ export const updateSprocketController = async (req, res, next) => {
         await updateSprocket(id, sprocket);
         res.status(200).json({ message: 'Sprocket updated successfully' });
     } catch (error) {
+        if (error.isJoi) {
+            return res.status(400).json({ error: error.message });
+        }
         next(error);
     }
 }

@@ -4,11 +4,7 @@ import { sprocketIdSchema } from '../../schema/sprocket.schema.js';
 export const getSprocketByIdController = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { error: idError } = await sprocketIdSchema.validateAsync({ id });
-        if (idError) {
-            return res.status(400).json({ error: idError.details[0].message });
-        }
-
+        await sprocketIdSchema.validateAsync({ id });
         const sprocket = await getSprocketById(id);
         if (!sprocket) {
             return res.status(404).json({ error: 'Sprocket not found' });
@@ -22,6 +18,9 @@ export const getSprocketByIdController = async (req, res, next) => {
         };
         res.status(200).json(formattedSprocket);
     } catch (error) {
+        if (error.isJoi) {
+            return res.status(400).json({ error: error.message });
+        }
         next(error);
     }
 }
