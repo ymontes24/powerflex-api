@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: powerflex-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: powerflex
+      MYSQL_USER: powerflex
+      MYSQL_PASSWORD: powerflex
+    volumes:
+      - ./MySQL/DLL.sql:/docker-entrypoint-initdb.d/DLL.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  testing:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: powerflex-nodejs
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - testing
+      - mysql
+
+networks:
+  app-network:
+    driver: bridge
